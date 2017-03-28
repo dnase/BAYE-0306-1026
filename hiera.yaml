@@ -1,0 +1,11 @@
+---
+:backends:
+  - yaml
+
+:yaml:
+  :datadir: /etc/puppetlabs/code/hieradata
+
+:hierarchy:
+  - "%{::trusted.certname}"
+  - "%{environment}"
+  - common
