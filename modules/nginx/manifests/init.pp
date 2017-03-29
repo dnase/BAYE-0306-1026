@@ -1,24 +1,41 @@
 class nginx {
+  case $::osfamily {
+    'redhat', 'debian' : {
+      $package = 'nginx'
+      $owner = 'root'
+      $group = 'root'
+      $docroot = '/var/www'
+      $confdir = '/etc/nginx'
+    }
+    'windows' : {
+      $package = 'nginx-service'
+      $owner = 'Administrator'
+      $group = 'Administrators'
+      $docroot = 'C:/ProgramData/nginx/html'
+      $confdir = 'C:/ProgramData/nginx/conf'
+    }
+  }
   File {
-    owner => 'root',
-    group => 'root',
+    owner => $owner,
+    group => $group,
     mode  => '0664',
   }
   package { 'nginx':
     ensure => present,
+    name   => $package,
   }
-  file { '/var/www':
+  file { $docroot:
     ensure => directory,
   }
   file { 'index.html':
     ensure => file,
-    path   => '/var/www/index.html',
+    path   => "${docroot}/index.html",
     source => 'puppet:///modules/nginx/index.html',
   }
   file { 'nginx.conf':
     ensure  => file,
-    path    => '/etc/nginx/nginx.conf',
-    source  => 'puppet:///modules/nginx/nginx.conf',
+    path    => "${confdir}/nginx.conf",
+    source  => "puppet:///modules/nginx/${::osfamily}.conf",
     require => Package['nginx'],
   }
   service { 'nginx':
