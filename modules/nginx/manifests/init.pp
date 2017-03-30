@@ -1,10 +1,13 @@
-class nginx {
+class nginx (
+  String $root = undef,
+  Boolean $highperf = true,
+) {
   case $::osfamily {
     'redhat', 'debian' : {
       $package = 'nginx'
       $owner = 'root'
       $group = 'root'
-      $docroot = '/var/www'
+      $default_docroot = '/var/www'
       $confdir = '/etc/nginx'
       $logdir = '/var/log'
     }
@@ -12,7 +15,7 @@ class nginx {
       $package = 'nginx-service'
       $owner = 'Administrator'
       $group = 'Administrators'
-      $docroot = 'C:/ProgramData/nginx/html'
+      $default_docroot = 'C:/ProgramData/nginx/html'
       $confdir = 'C:/ProgramData/nginx/conf'
       $logdir = 'C:/Wherever'
     }
@@ -21,6 +24,10 @@ class nginx {
     'windows' => 'nobody',
     'debian'  => 'www-data',
     'redhat'  => 'nginx',
+  }
+  $docroot = $root ? {
+    undef   => $default_docroot,
+    default => $root,
   }
   File {
     owner => $owner,
@@ -39,13 +46,14 @@ class nginx {
     ensure => directory,
   }
   file { 'nginx.conf':
-    ensure    => file,
-    path      => "${confdir}/nginx.conf",
-    content   => epp('nginx/nginx.conf.epp', {
-      docroot => $docroot,
-      logdir  => $logdir,
-      confdir => $confdir,
-      user    => $user,
+    ensure     => file,
+    path       => "${confdir}/nginx.conf",
+    content    => epp('nginx/nginx.conf.epp', {
+      docroot  => $docroot,
+      logdir   => $logdir,
+      confdir  => $confdir,
+      user     => $user,
+      highperf => $highperf,
     }),
     require => Package['nginx'],
     notify  => Service['nginx'],
