@@ -1,0 +1,7 @@
+<html>
+<head></head>
+<body>
+  <h1>Welcome to <%= $fqdn %></h1>
+  <h2>I have <%= $memory['system']['available'] %> memory available</h2>
+</body>
+</html>
