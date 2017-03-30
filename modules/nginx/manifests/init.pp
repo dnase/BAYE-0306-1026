@@ -1,34 +1,14 @@
 class nginx (
-  String $root = undef,
-  Boolean $highperf = true,
-) {
-  case $::osfamily {
-    'redhat', 'debian' : {
-      $package = 'nginx'
-      $owner = 'root'
-      $group = 'root'
-      $default_docroot = '/var/www'
-      $confdir = '/etc/nginx'
-      $logdir = '/var/log'
-    }
-    'windows' : {
-      $package = 'nginx-service'
-      $owner = 'Administrator'
-      $group = 'Administrators'
-      $default_docroot = 'C:/ProgramData/nginx/html'
-      $confdir = 'C:/ProgramData/nginx/conf'
-      $logdir = 'C:/Wherever'
-    }
-  }
-  $user = $::osfamily ? {
-    'windows' => 'nobody',
-    'debian'  => 'www-data',
-    'redhat'  => 'nginx',
-  }
-  $docroot = $root ? {
-    undef   => $default_docroot,
-    default => $root,
-  }
+  String $package = $nginx::params::package,
+  String $owner = $nginx::params::owner,
+  String $group = $nginx::params::group,
+  String $docroot = $nginx::params::docroot,
+  String $confdir = $nginx::params::confdir,
+  String $blockdir = $nginx::params::blockdir,
+  String $logdir = $nginx::params::logdir,
+  String $user = $nginx::params::user,
+  Boolean $highperf = $nginx::params::highperf,
+) inherits nginx::params {
   File {
     owner => $owner,
     group => $group,
