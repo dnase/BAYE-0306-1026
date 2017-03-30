@@ -4,7 +4,6 @@ class nginx (
   String $group = $nginx::params::group,
   String $docroot = $nginx::params::docroot,
   String $confdir = $nginx::params::confdir,
-  String $blockdir = $nginx::params::blockdir,
   String $logdir = $nginx::params::logdir,
   String $user = $nginx::params::user,
   Boolean $highperf = $nginx::params::highperf,
