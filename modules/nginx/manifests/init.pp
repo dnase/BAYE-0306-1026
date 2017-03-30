@@ -31,13 +31,12 @@ class nginx {
     ensure => present,
     name   => $package,
   }
-  file { $docroot:
-    ensure => directory,
+  nginx::vhost { 'default':
+    docroot     => $docroot,
+    server_name => $::fqdn,
   }
-  file { 'index.html':
-    ensure  => file,
-    path    => "${docroot}/index.html",
-    content => epp('nginx/index.html.epp'),
+  file { "${docroot}/vhosts":
+    ensure => directory,
   }
   file { 'nginx.conf':
     ensure    => file,
@@ -49,6 +48,7 @@ class nginx {
       user    => $user,
     }),
     require => Package['nginx'],
+    notify  => Service['nginx'],
   }
   service { 'nginx':
     ensure    => running,

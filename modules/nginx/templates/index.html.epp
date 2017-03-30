@@ -2,6 +2,6 @@
 <head></head>
 <body>
   <h1>Welcome to <%= $fqdn %></h1>
-  <h2>I have <%= $memory['system']['available'] %> memory available</h2>
+  <h2>Hi! My server name is <%= $server_name %></h2>
 </body>
 </html>
